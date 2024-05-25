@@ -21,6 +21,7 @@ def main():
     except serial.SerialException:
         ser = None
         print(f"Could not open serial port {serial_port}, outputting to stdout")
+        return
 
     start_time = time.time()
     while True:
