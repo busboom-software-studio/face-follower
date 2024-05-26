@@ -26,4 +26,4 @@ A view from the camera, showing the object bounding box and centroid
 [![Camera View](https://img.youtube.com/vi/ywGxtKd_LxQ/0.jpg)](https://www.youtube.com/watch?v=ywGxtKd_LxQ)
 
 A view of the Pan-tilt device. 
-[![Servo View](https://img.youtube.com/vixhm9eCSPkeo/0.jpg)](https://www.youtube.com/watch?v=xhm9eCSPkeo)
+[![Servo View](https://img.youtube.com/vi/xhm9eCSPkeo/0.jpg)](https://www.youtube.com/watch?v=xhm9eCSPkeo)
