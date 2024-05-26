@@ -1,13 +1,14 @@
+import struct
 import cv2
 import numpy as np
 import signal
 import sys
 
 
-def detect_yellow_object(frame, mask):
+def detect_color(frame, mask):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     
-    # Create mask for the yellow range
+    # Create mask for the orange range
     mask = cv2.inRange(hsv, mask['lower'], mask['upper'])
     
     # Apply morphological operations to remove noise
@@ -17,16 +18,31 @@ def detect_yellow_object(frame, mask):
     
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     
+    centroid = None
     if contours:
         # Find the largest contour by area
         largest_contour = max(contours, key=cv2.contourArea)
         x, y, w, h = cv2.boundingRect(largest_contour)
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
         
-        # Collect HSV values of the detected yellow object
-        mask_contour = np.zeros_like(mask)
-        cv2.drawContours(mask_contour, [largest_contour], -1, 255, thickness=cv2.FILLED)
-        hsv_values = hsv[mask_contour == 255]
-
+        # Calculate the centroid of the largest contour
+        M = cv2.moments(largest_contour)
+        if M["m00"] != 0:
+            cX = int(M["m10"] / M["m00"])
+            cY = int(M["m01"] / M["m00"])
+            centroid = (cX, cY)
+            cv2.circle(frame, centroid, 5, (0, 0, 255), -1)
     
-    return frame
+    return frame, centroid
+
+
+def send_angles(ser, angle1, angle2):
+    # Convert angles to 32-bit integers
+    angle1_int = max(int(angle1 * 10000), 1)
+    angle2_int = max(int(angle2 * 10000), 1)
+    data = struct.pack('iii', angle1_int, angle2_int, 0)
+
+    if ser:
+        ser.write(data)
+        response = ser.readline().decode().strip()  # Read a line from the serial port
+        return response

@@ -21,15 +21,24 @@ void loop() {
     int32_t angles[3];
     Serial.readBytes((char*)angles, 12);  // Read 12 bytes
 
-    if (angles[2] != 0) {
+    if (angles[2] != 0 || angles[0] == 0 || angles[1] == 0 ) {
       // Discard the data and keep reading until we find a zero
-      while (Serial.read() != 0);
+      Serial.println("Error (framing)");
+      while (Serial.available() && Serial.read() != 0);
+
       return;
     }
 
     // Convert back to float and scale
     float angle1 = (float)angles[0] / 10000.0;
     float angle2 = (float)angles[1] / 10000.0;
+
+    if (angle1 < 0 || angle1 > 180 || angle2 < 0 || angle2 > 180){
+      // Discard the data and keep reading until we find a zero
+      Serial.println("Error (values)");
+      while (Serial.available() && Serial.read() != 0);
+      return;
+    }
 
     // Convert back to float and scale, then set angles to servos
     for (int i = 0; i < 2; i++) {
@@ -38,19 +47,14 @@ void loop() {
       board1.setPWM(i, 0, pulse);
 
       // Print the servo number, angle, and pulse
-      /*
-      Serial.print("Servo ");
+      
+      /*Serial.print("Servo ");
       Serial.print(i + 1);
       Serial.print(" Angle: ");
       Serial.print(angle);
       Serial.print(" Pulse: ");
-      Serial.println(pulse);
-      */
-}
-
-
-    
-
-
+      Serial.println(pulse);*/
+      
+    }
   }
 }

@@ -16,3 +16,5 @@ jupyterlab
 jupyter-ai
 jupyter_ai_magics
 langchain-openai
+
+simple-pid
