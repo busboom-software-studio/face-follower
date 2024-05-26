@@ -1,3 +1,8 @@
+"""
+THis script moves the servos in a sine and cosine wave pattern. 
+The angles are calculated using the sine and cosine functions. """
+
+
 import math
 import time
 import serial

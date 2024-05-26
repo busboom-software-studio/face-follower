@@ -28,6 +28,18 @@ blue_mask = {
         'upper': np.array([140, 255, 255])
     }
 
+
+# Red mask, using two ranges to capture the full spectrum of red
+red_mask = {
+    'lower1': np.array([0, 150, 150]),
+    'upper1': np.array([10, 255, 255]),
+    'lower2': np.array([170, 150, 150]),
+    'upper2': np.array([180, 255, 255])
+}
+
+
+
+
 def update_servo_angles(ser, servo_0_angle, servo_1_angle):
     send_angles(ser, servo_0_angle, servo_1_angle)
 
@@ -52,7 +64,7 @@ def main():
             print("Failed to grab frame")
             break
         
-        processed_frame, centroid = detect_color(frame, blue_mask)
+        processed_frame, centroid = detect_color(frame, red_mask)
         
         if centroid is not None:
             centroid_x = int(centroid[0])

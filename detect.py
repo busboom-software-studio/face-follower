@@ -8,9 +8,9 @@ import sys
 from detect_lib import detect_yellow_object
 
 # Define the initial range for yellow in HSV
-initial_mask = {
-    'lower': np.array([20, 100, 100]),
-    'upper': np.array([30, 255, 255])
+blue_mask = {
+    'lower': np.array([100, 150, 0]),
+    'upper': np.array([140, 255, 255])
 }
 
 def main():

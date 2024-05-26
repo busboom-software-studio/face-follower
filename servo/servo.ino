@@ -1,3 +1,15 @@
+/*
+Reads 3 32-bit integers from Serial and sets the first two to the angles of the first two servos, using an 
+Adafruit 16-channel PWM/Servo driver.  ( Actually any PCA9685 will do ). 
+
+The angles are in servo degrees, 0 to 180, and are scaled by 10000.  The third integer is a zero, and is used to
+detect framing errors.  If the third integer is not zero, the data is discarded and the program waits for the next
+set of 3 integers.  If the first two integers are not between 0 and 180, the data is discarded and the program waits
+for the next set of 3 integers.
+
+
+*/
+
 #include <Adafruit_PWMServoDriver.h>
 Adafruit_PWMServoDriver board1 = Adafruit_PWMServoDriver(0x40);  // default address 0x40
 

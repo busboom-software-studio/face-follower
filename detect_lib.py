@@ -1,15 +1,37 @@
+"""
+This module provides functions for detecting objects of a specific color in a frame and sending angles to a serial port.
+"""
+
 import struct
 import cv2
 import numpy as np
 import signal
 import sys
+from serial import Serial
+
 
 
 def detect_color(frame, mask):
-    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    """
+    Detects the largest object of a specific color in a frame.
+    
+    Args:
+        frame (np.array): The frame to process.
+        mask (dict): A dictionary containing the lower and upper bounds of the color range.
+    
+    Returns:
+        tuple: A tuple containing the processed frame and the centroid of the largest contour.
+    """
+    hsv = cv2.cvtColor(frame: np.array, cv2.COLOR_BGR2HSV)
     
     # Create mask for the orange range
-    mask = cv2.inRange(hsv, mask['lower'], mask['upper'])
+    if len(mask) == 2:
+        mask = cv2.inRange(hsv, mask['lower'], mask['upper'])
+    else:
+        mask1 = cv2.inRange(hsv, mask['lower1'], mask['upper1'])
+        mask2 = cv2.inRange(hsv, mask['lower2'], mask['upper2'])
+        mask = cv2.bitwise_or(mask1, mask2)
+
     
     # Apply morphological operations to remove noise
     kernel = np.ones((3, 3), np.uint8)
@@ -36,7 +58,18 @@ def detect_color(frame, mask):
     return frame, centroid
 
 
-def send_angles(ser, angle1, angle2):
+def send_angles(ser: Serial, angle1 : float, angle2: float ):
+    """
+    Sends angles to a serial port.
+    
+    Args:
+        ser: The serial port object.
+        angle1 (float): The first angle to send.
+        angle2 (float): The second angle to send.
+    
+    Returns:
+        str: The response received from the serial port.
+    """
     # Convert angles to 32-bit integers
     angle1_int = max(int(angle1 * 10000), 1)
     angle2_int = max(int(angle2 * 10000), 1)

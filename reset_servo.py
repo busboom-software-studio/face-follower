@@ -1,3 +1,5 @@
+""" Reset the servo to the 0, 0 position """
+
 import math
 import time
 import serial
