@@ -20,3 +20,5 @@ langchain-openai
 simple-pid
 
 pygame
+pyserial 
+

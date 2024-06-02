@@ -22,7 +22,7 @@ def detect_color(frame, mask):
     Returns:
         tuple: A tuple containing the processed frame and the centroid of the largest contour.
     """
-    hsv = cv2.cvtColor(frame: np.array, cv2.COLOR_BGR2HSV)
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     
     # Create mask for the orange range
     if len(mask) == 2:

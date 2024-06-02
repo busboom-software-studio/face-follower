@@ -8,11 +8,13 @@ from detect_lib import send_angles, detect_color
 from simple_pid import PID
 
 # Configuration
-serial_port = '/dev/tty.usbmodem2244301'  # Change this to your serial port
+serial_port = '/dev/tty.usbmodem22441301'  # Change this to your serial port
 baud_rate = 115200
 
-pid_0 = PID(5, 0.1, 0.05, setpoint=0)
-pid_1 = PID(5, 0.1, 0.05, setpoint=0)
+pid_param = {'Kp':3, 'Ki':.05, 'Kd':0.05, 'setpoint':0}
+
+pid_0 = PID(**pid_param)
+pid_1 = PID(**pid_param)
 
 try:
     ser = serial.Serial(serial_port, baud_rate)
