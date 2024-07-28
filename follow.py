@@ -8,7 +8,7 @@ from detect_lib import send_angles, detect_color
 from simple_pid import PID
 
 # Configuration
-serial_port = '/dev/tty.usbmodem22431201'  # Change this to your serial port
+serial_port = '/dev/tty.usbmodem22431401'  # Change this to your serial port
 baud_rate = 115200
 
 pid_param = {'Kp':4, 'Ki':0.05, 'Kd':0.05, 'setpoint':0}
@@ -40,10 +40,8 @@ red_mask = {
 }
 
 
-
-
 def update_servo_angles(ser, servo_0_angle, servo_1_angle):
-    send_angles(ser, servo_0_angle, servo_1_angle)
+    return send_angles(ser, servo_0_angle, servo_1_angle)
 
 def pid_control(scaled_centoid, servo_0_angle, servo_1_angle):
     """Implement a PID controller to move the servos to the centroid of the object.  """
@@ -105,9 +103,9 @@ def main():
             elif servo_1_angle > 180:
                 servo_1_angle = 180
 
+        r = update_servo_angles(ser, servo_0_angle, servo_1_angle)
 
-
-        update_servo_angles(ser, servo_0_angle, servo_1_angle)
+        print(r)
 
         print(f"servo_0_angle={servo_0_angle}, servo_1_angle={servo_1_angle}", end=' ')
 

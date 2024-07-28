@@ -60,12 +60,12 @@ void loop() {
 
       // Print the servo number, angle, and pulse
       
-      /*Serial.print("Servo ");
+      Serial.print("Servo ");
       Serial.print(i + 1);
       Serial.print(" Angle: ");
       Serial.print(angle);
       Serial.print(" Pulse: ");
-      Serial.println(pulse);*/
+      Serial.println(pulse);
       
     }
   }
