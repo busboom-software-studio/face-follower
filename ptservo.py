@@ -1,43 +1,24 @@
 import time
 import serial
-from simple_pid import PID
+
 import struct
 
 
 
 class PTServo:
     def __init__(self, serial_port, baud_rate):
-        self.x = 90
-        self.y = 90
+        self.x = None
+        self.y = None
+        self.last_response = None
         
-        self.pid_y = PID(Kp=2, Ki=0.01, Kd=0.5, setpoint=0)
-        self.pid_x = PID(Kp=3, Ki=0.01, Kd=0.5, setpoint=0)
+        self.ser = serial.Serial(serial_port, baud_rate)
+        self.ser.timeout = 0
+        print(f"Opened serial port {serial_port}")
+
         
-        try:
-            self.ser = serial.Serial(serial_port, baud_rate)
-            self.ser.timeout = 0
-            print(f"Opened serial port {serial_port}")
-        except serial.SerialException:
-            self.ser = None
-            print(f"Could not open serial port {serial_port}, outputting to stdout")
-            
-        self.move_a(90, 180)
-
-
-    def update_angles(self, centroid):
-    
-        y = self.pid_y(centroid[1]) 
-        x = self.pid_x(centroid[0]) 
-        
-        print(f"x={round(x)}, y={round(y)}")
-    
-        self.move_r(-x , y)    
-        
-
-
 class PTServoMB(PTServo):
 
-   
+
     def move_a(self, x, y):
         message = f"a {x} {y}\n"\
             
@@ -48,18 +29,22 @@ class PTServoMB(PTServo):
             
         self.ser.write(message.encode())
         
-    def get_status(self):
-        o = ""
-        while self.ser.in_waiting > 0:
-            o += self.ser.read(self.ser.in_waiting).decode()
-            
-        if 'Traceback' in o:
-            raise Exception(o)
-        return o
-    
+
 
 class PTServoArduino(PTServo):
 
+    def __init__(self, serial_port, baud_rate):
+        super().__init__(serial_port, baud_rate)
+        
+        for i in range(10):
+
+            r = self.get_status().strip()
+            if r == 'ready.':
+                break
+            print(r)
+            time.sleep(1)
+        else:
+            raise Exception("Could not connect to Arduino")
 
     def check_status(self):
         
@@ -88,8 +73,17 @@ class PTServoArduino(PTServo):
             str: The response received from the serial port.
         """
         # Convert angles to 32-bit integers
-        angle1 = max(int(angle1 * 10000), 1)
-        angle2 = max(int(angle2 * 10000), 1)
+        
+        def ca(a):
+            v =  int( (a+180) * 10000) 
+            
+            if (v == 0):
+                v = 1
+        
+            return v
+        
+        angle1 = ca(angle1)
+        angle2 = ca(angle2)
         
         assert code != 0, "Code cannot be 0"
         
@@ -102,8 +96,20 @@ class PTServoArduino(PTServo):
         o = ""
         while self.ser.in_waiting > 0:
             o += self.ser.read(self.ser.in_waiting).decode()
-            
-        return o
+           
+         
+        lines = []
+        for line in o.split('\n'):
+            if line.startswith('pos:'):
+                _, x, y = line.split()
+                self.x = round(float(x), 1)
+                self.y = round(float(y), 1)
+            lines.append(line)
+        
+        self.last_response = '\n'.join(lines)
+        
+        return self.last_response
+    
             
         
         

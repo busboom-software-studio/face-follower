@@ -17,6 +17,16 @@ int angleToPulse(float ang) {
   return pulse;
 }
 
+int decode_angle(int32_t angle) {
+
+  int decoded = (angle - 1800000) / 10000;
+
+  if (decoded == -180) {
+    decoded = -179;  // Adjust to avoid ambiguity with zero encoding
+  }
+  return decoded;
+
+}
 
 // Define the updated data structure
 struct ServoData {
@@ -81,13 +91,9 @@ void loop() {
     }
 
     // Convert angles to float and scale
-    float angle1 = (float)data.angle1 / 10000.0;
-    float angle2 = (float)data.angle2 / 10000.0;
+    float angle1 = decode_angle(data.angle1);
+    float angle2 = decode_angle(data.angle2);
 
-    if (angle1 < 0 || angle1 > 180 || angle2 < 0 || angle2 > 180) {
-      Serial.println("Error (values out of range)");
-      return;
-    }
 
     // Set angles to servos
     for (int i = 0; i < 2; i++) {
@@ -99,7 +105,13 @@ void loop() {
         angle += lastAngles[i];
         if (angle > 180) angle = 180;  // Clamp to max angle
         if (angle < 0) angle = 0;     // Clamp to min angle
-      } 
+      } else {
+        if (angle > 180 || angle < 0) {
+          Serial.print("Error (angle out of range): ");
+          Serial.println(angle);
+          return;
+        }
+      }
 
       int pulse = angleToPulse(angle);
       board1.setPWM(i, 0, pulse);
@@ -108,14 +120,11 @@ void loop() {
 
       // Print the servo number, angle, and pulse
 
-      Serial.print("Code: ");
-      Serial.print((char)data.code);
-      Serial.print(" Servo ");
-      Serial.print(i + 1);
-      Serial.print(" Angle: ");
-      Serial.print(angle);
-      Serial.print(" Pulse: ");
-      Serial.println(pulse);
+      Serial.print  ("pos: ");
+      Serial.print  (lastAngles[0]);
+      Serial.print  (" ");
+      Serial.println(lastAngles[1]);
+      
     }
   } 
 }
