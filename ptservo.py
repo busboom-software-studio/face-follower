@@ -1,10 +1,7 @@
-from time import sleep
-from regex import X
-from seaborn import xkcd_rgb
+import time
 import serial
 from simple_pid import PID
 import struct
-from serial import Serial
 
 
 
@@ -63,6 +60,12 @@ class PTServoMB(PTServo):
 
 class PTServoArduino(PTServo):
 
+
+    def check_status(self):
+        
+        self.send_angles(ord('?'), 0, 0)
+        time.sleep(0.1)
+        return self.get_status()
 
     def move_a(self, x, y):
         

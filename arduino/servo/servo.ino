@@ -17,8 +17,6 @@ int angleToPulse(float ang) {
   return pulse;
 }
 
-// Array to keep track of the last angles for the servos
-float lastAngles[2] = {0.0, 0.0};
 
 // Define the updated data structure
 struct ServoData {
@@ -45,12 +43,28 @@ void setup() {
   Serial.begin(115200);
   board1.begin();
   board1.setPWMFreq(60);  // Analog servos run at ~60 Hz updates
+
+  while (!Serial) {
+    ; // Wait for Serial to be ready
+  }
+  Serial.println("ready.");
 }
+
+// Array to keep track of the last angles for the servos
+float lastAngles[2] = {0.0, 0.0};
+
+ServoData data;
 
 void loop() {
   if (Serial.available() >= sizeof(ServoData)) {  // Check if enough bytes are available
-    ServoData data;
+
     Serial.readBytes((char*)&data, sizeof(ServoData));  // Read data into the struct
+
+    if ( (char)data.code == '?'){
+      // Status request
+      Serial.println("ready.");
+      return;
+    }
 
     // Validate the data
     if ( data.code == 0 || data.angle1 == 0 || data.angle2 == 0 || data.terminator != 0) {
@@ -93,12 +107,15 @@ void loop() {
       lastAngles[i] = angle;
 
       // Print the servo number, angle, and pulse
-      Serial.print("Servo ");
+
+      Serial.print("Code: ");
+      Serial.print((char)data.code);
+      Serial.print(" Servo ");
       Serial.print(i + 1);
       Serial.print(" Angle: ");
       Serial.print(angle);
       Serial.print(" Pulse: ");
       Serial.println(pulse);
     }
-  }
+  } 
 }

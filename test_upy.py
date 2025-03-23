@@ -18,8 +18,8 @@ def flex():
     """Yields x and y values moving from (0, 0) to (180, 180)."""
     while True:
        
-        for x,y in [(0,0), (0,180), (180,180), (180,0), (180, 180)]:
-            print('-'*20)
+        for x,y in [(0,0), (0,180), (180,180), (180,0), (180, 180), (0,0)]:
+            
             yield x,y
         return
 
@@ -41,12 +41,25 @@ def kbd_move():
 def test():
     #pt_servo = PTServoMB('/dev/tty.usbmodem2212202', 115200)
     pt_servo = PTServoArduino('/dev/tty.usbmodem2212201', 115200)
+    
+    for i in range(10):
+        #r = pt_servo.check_status().strip()
+        #print(f"?: {i} '{r}'")
+        r = pt_servo.get_status().strip()
+        if r == 'ready.':
+            break
+        time.sleep(1)
+    
     generator = flex()
 
+    print(pt_servo.get_status())
+    print('='*20) 
     for x, y in generator:
-        pt_servo.move_r(x, y)
+        print('-'*20)
+        pt_servo.move_a(x, y)
+        time.sleep(1)
         print(pt_servo.get_status())
-        time.sleep(0.05)
+        
 
 if __name__ == "__main__":
     test()
