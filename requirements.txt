@@ -22,3 +22,4 @@ simple-pid
 pygame
 pyserial 
 
+pynput

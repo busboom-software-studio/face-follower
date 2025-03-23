@@ -58,24 +58,4 @@ def detect_color(frame, mask):
     return frame, centroid
 
 
-def send_angles_arduino(ser: Serial, angle1 : float, angle2: float ):
-    """
-    Sends angles to a serial port.
-    
-    Args:
-        ser: The serial port object.
-        angle1 (float): The first angle to send.
-        angle2 (float): The second angle to send.
-    
-    Returns:
-        str: The response received from the serial port.
-    """
-    # Convert angles to 32-bit integers
-    angle1_int = max(int(angle1 * 10000), 1)
-    angle2_int = max(int(angle2 * 10000), 1)
-    data = struct.pack('iii', angle1_int, angle2_int, 0)
 
-    if ser:
-        ser.write(data)
-        response = ser.readline().decode().strip()  # Read a line from the serial port
-        return response
