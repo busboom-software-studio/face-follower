@@ -5,7 +5,7 @@ import time
 import serial
 import sys
 
-from detect_lib import send_angles
+from detect_lib import send_angles_arduino
 
 # Configuration
 serial_port = '/dev/tty.usbmodem2244301'  # Change this to your serial port
@@ -21,6 +21,6 @@ except serial.SerialException:
     sys.exit()
 
 for i in range(10):
-    print(send_angles(ser, 0, 0))
+    print(send_angles_arduino(ser, 0, 0))
     time.sleep(.1)
 

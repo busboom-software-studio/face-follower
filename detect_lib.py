@@ -58,7 +58,7 @@ def detect_color(frame, mask):
     return frame, centroid
 
 
-def send_angles(ser: Serial, angle1 : float, angle2: float ):
+def send_angles_arduino(ser: Serial, angle1 : float, angle2: float ):
     """
     Sends angles to a serial port.
     

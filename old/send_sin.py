@@ -7,7 +7,7 @@ import math
 import time
 import serial
 
-from detect_lib import send_angles
+from detect_lib import send_angles_arduino
 
 # Configuration
 serial_port = '/dev/tty.usbmodem2244301'  # Change this to your serial port
@@ -34,7 +34,7 @@ def main():
     while True:
         t = time.time() - start_time
         angle1, angle2 = generate_angles(t)
-        r = send_angles(ser, angle1, angle2)
+        r = send_angles_arduino(ser, angle1, angle2)
         print(f"Sent angles: {angle1:.2f}, {angle2:.2f} | {r}")
 
 # call main with main guard

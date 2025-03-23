@@ -4,7 +4,7 @@ import math
 import time
 import serial
 import sys
-from detect_lib import send_angles, detect_color
+from detect_lib import send_angles_arduino, detect_color
 from simple_pid import PID
 
 # Configuration
@@ -40,13 +40,11 @@ red_mask = {
 }
 
 
-def update_servo_angles(ser, servo_0_angle, servo_1_angle):
-    return send_angles(ser, servo_0_angle, servo_1_angle)
 
-def pid_control(scaled_centoid, servo_0_angle, servo_1_angle):
+def pid_control(scaled_centroid, servo_0_angle, servo_1_angle):
     """Implement a PID controller to move the servos to the centroid of the object.  """
-    angle_0 = pid_0(scaled_centoid[1])
-    angle_1 = pid_1(scaled_centoid[0])
+    angle_0 = pid_0(scaled_centroid[1])
+    angle_1 = pid_1(scaled_centroid[0])
     return angle_0, angle_1
 
 
@@ -103,7 +101,7 @@ def main():
             elif servo_1_angle > 180:
                 servo_1_angle = 180
 
-        r = update_servo_angles(ser, servo_0_angle, servo_1_angle)
+        r = send_angles_arduino(ser, servo_0_angle, servo_1_angle)
 
         print(r)
 

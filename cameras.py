@@ -25,4 +25,4 @@ def display_frame(frame):
     plt.axis('off')  # Turn off axis numbers and ticks
     plt.show()
 
-test_camera(0)
+test_camera(1)

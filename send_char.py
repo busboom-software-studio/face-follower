@@ -1,3 +1,4 @@
+"""Send commands to the Micropython controller over serial."""
 import serial
 import time
 import math
